@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <signal.h>
+#include <unist.h>
+#include <curse.h>
 
 int main(){
 	void f(int);
