@@ -25,8 +25,8 @@ void enable();
 int has_seat(double input);
 void reset_seat(int);	
 void time_reset(double input);
-void getback_seat(double input);	
-
+int getback_seat(double input);	
+void changestate(int );
 void whereXY(int*, int*);
 int whatnumber(int , int);
 void View();
