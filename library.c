@@ -8,9 +8,8 @@ int main(){
 	signal(SIGALRM, cntdown);
 	signal(SIGIO, on_input);
 	enable();
-	set_ticker(5000);
+	set_ticker(1000);
 	while(1){
-		fflush(stdout);	
 		pause();
 	
 
@@ -38,13 +37,13 @@ void cntdown(int signum){
 	for(;i<24;i++){
 		if(library[i].cnt > 0){
 			library[i].cnt--;
+			changestate(i+1);
 			if(library[i].cnt == 0)
 				reset_seat(i);		
 		}	
-		if(library[i].cnt != 0){
-			printf("\n%d Seat's information\nOccupier : %lf\nTime : %dmins left\n\n",library[i].seatnum, library[i].occupier, library[i].cnt);
-		}
 	}
+	View();
+
 }
 int is_occupied(int num){
 	if(library[num-1].cnt != 0)
@@ -52,29 +51,46 @@ int is_occupied(int num){
 	else
 		return 0;
 }
+int to_int(char num){
+	num -= 48;
+	return num;
+}
 void on_input(int signum){
 	double input;
-	int num,i = 0, j = 0;
+	char num;
+	int i = 0, j = 0, numi;
 	int x, y;
 	scanf("%lf", &input);
 	if(has_seat(input) != 0){
-	//	printf("연장1 or 반납2");
-		scanf("%d", &num);
-		if(num == 1)
-			time_reset(input);
-		else
-			getback_seat(input);
+		scanf("%c", &num);
+		while(1){
+			numi = to_int(num);
+			if(numi == 1){
+				time_reset(input);
+				break;
+			}
+			else if(numi == 2)
+			{		
+				j = getback_seat(input);
+				changestate(j+1);
+				View();	
+				break;		
+			}
+			else{
+				scanf("%c", &num);
+				continue;
+			}
+		}
 		return;
 	}
-	//printf("좌석을 선택해 주세요\n");
-	//scanf("%d", &num);
 	whereXY(&x, &y);
-	num = whatnumber(y,x);
-	if(is_occupied(num))
+	i = whatnumber(y,x);
+	if(is_occupied(i))
 		printf("선택할 수 없습니다.\n");
 	else{
-		set_seat(input, num);
-		//View();
+		set_seat(input, i);
+		changestate(i);
+		View();
 	}		
 }
 
